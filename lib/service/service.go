@@ -2667,7 +2667,7 @@ func (process *TeleportProcess) creatingNewRoles(path string) error {
 
 			if _, err := process.localAuth.GetRole(role.GetName()); err == nil {
 				log.Debugf("Delete role: %s", role.GetName())
-				process.localAuth.DeleteRole(role.GetName())
+				process.localAuth.DeleteRole(context.Background(), role.GetName())
 			}
 
 			err = process.localAuth.CreateRole(role)

@@ -367,13 +367,13 @@ func (rc *ResourceCommand) createRole(client auth.ClientI, raw services.UnknownR
 			return trace.AlreadyExists("role %q already exists", roleName)
 		}
 
-		if err := client.UpsertRole(role); err != nil {
+		if err := client.UpsertRole(context.Background(), role); err != nil {
 			return trace.Wrap(err)
 		}
 
 		fmt.Printf("user %q has been updated\n", roleName)
 	} else {
-		if err := client.UpsertRole(role); err != nil {
+		if err := client.UpsertRole(context.Background(), role); err != nil {
 			return trace.Wrap(err)
 		}
 

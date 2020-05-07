@@ -110,7 +110,7 @@ $(BUILDDIR)/tsh:
 # only tsh is built.
 #
 .PHONY:full
-full: docker-binaries $(BUILDDIR)/webassets.zip
+full: all $(BUILDDIR)/webassets.zip
 ifneq ("$(OS)", "windows")
 	@echo "---> Attaching OSS web assets."
 	cat $(BUILDDIR)/webassets.zip >> $(BUILDDIR)/teleport
@@ -366,8 +366,9 @@ install: build
 # Docker image build. Always build the binaries themselves within docker (see
 # the "docker" rule) to avoid dependencies on the host libc version.
 .PHONY: image
-image: full
+image: clean docker-binaries
 	cp ./build.assets/charts/Dockerfile $(BUILDDIR)/
+	cp ./build.assets/config/teleport.yaml $(BUILDDIR)/
 	cd $(BUILDDIR) && docker build --no-cache . -t $(DOCKER_IMAGE):$(VERSION)
 	if [ -f e/Makefile ]; then $(MAKE) -C e image; fi
 

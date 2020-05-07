@@ -532,7 +532,7 @@ func (c *Cache) processEvent(ctx context.Context, event services.Event) error {
 		return nil
 	}
 
-	return collection.processEvent(event)
+	return collection.processEvent(ctx, event)
 	// if err := collection.processEvent(event); err != nil {
 	// 	return trace.Wrap(err)
 	// }
