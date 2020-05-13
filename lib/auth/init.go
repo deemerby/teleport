@@ -143,6 +143,8 @@ type InitConfig struct {
 	// handshake) signatures for both host and user CAs. This option only
 	// affects newly-created CAs.
 	CASigningAlg *string
+	// IbCA is Certificate Authority.
+	IbCA []byte
 }
 
 // Init instantiates and configures an instance of AuthServer
