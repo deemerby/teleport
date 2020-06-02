@@ -58,8 +58,10 @@ services:
         targetPort: 3023
         protocol: TCP
 
-infobloxNetworks:
+infobloxVPN:
   - 205.234.19.0/24   # VPN
+  - 65.153.142.96/28  # Tacoma RA VPN
+  - 216.13.220.192/28 # Burnaby
 
 # Teleport Proxy configuration
 proxy:
