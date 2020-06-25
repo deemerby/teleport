@@ -10,9 +10,17 @@
 # Naming convention:
 #	for stable releases we use "1.0.0" format
 #   for pre-releases, we use   "1.0.0-beta.2" format
-VERSION?=4.3.5
+BUILD_NUMBER            ?= 0
 
-DOCKER_IMAGE ?= quay.io/gravitational/teleport
+GIT_COMMIT              := $(shell git describe --exact-match HEAD 2>/dev/null)
+ifeq ($(GIT_COMMIT),)
+    GIT_COMMIT          := $(shell git describe --dirty=-unsupported --always --tags --long || echo pre-commit)
+    VERSION       ?= $(GIT_COMMIT)-j$(BUILD_NUMBER)
+else
+    VERSION       ?= $(GIT_COMMIT)
+endif
+
+DOCKER_IMAGE ?= infobloxcto/atlas.teleport.app
 
 # These are standard autotools variables, don't change them please
 BUILDDIR ?= build
@@ -469,3 +477,38 @@ tp: tpsingle $(BUILDDIR)/webassets.zip
 	cat $(BUILDDIR)/webassets.zip >> $(BUILDDIR)/teleport
 	rm -fr $(BUILDDIR)/webassets.zip
 	zip -q -A $(BUILDDIR)/teleport
+
+
+PROJECT_ROOT            := $(PWD)
+SRCROOT_ON_HOST         := $(shell dirname $(abspath $(lastword $(MAKEFILE_LIST))))
+SRCROOT_IN_CONTAINER    := /go/src/$(PROJECT_ROOT)
+
+AWS_ACCESS_KEY_ID       := $(shell aws configure get aws_access_key_id)
+AWS_SECRET_ACCESS_KEY   := $(shell aws configure get aws_secret_access_key)
+AWS_SESSION_TOKEN       := $(shell aws configure get aws_session_token)
+AWS_REGION              := $(shell aws configure get region)
+
+CHART                   := atlas-teleport-app
+CHART_VERSION           := $(VERSION)
+CHART_FILE              := $(CHART)-$(CHART_VERSION).tgz
+
+HELM_REPO               ?= infobloxcto
+HELM_DOCKER_RUNNER      := docker run --rm
+HELM_DOCKER_RUNNER      += -v $(SRCROOT_ON_HOST):$(SRCROOT_IN_CONTAINER)
+HELM_DOCKER_RUNNER      += -e AWS_REGION=${AWS_REGION} -e AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID} -e AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY} -e AWS_SESSION_TOKEN=${AWS_SESSION_TOKEN}
+HELM_IMAGE              ?= infoblox/helm:2.14.3-1
+HELM_GENERATOR          ?= $(HELM_DOCKER_RUNNER) $(HELM_IMAGE)
+
+
+helm-lint: ## check helm chart
+	$(HELM_GENERATOR) lint $(SRCROOT_IN_CONTAINER)/helm/$(CHART)
+
+.PHONY: helm-push ## push helm tar file to s3 repository
+helm-push: helm-lint helm-build-property helm-build-package ## push helm chart to central repository
+	$(HELM_GENERATOR) s3 push --force $(SRCROOT_IN_CONTAINER)/helm/$(CHART_FILE) $(HELM_REPO)
+
+helm-build-package: ## create helm tar file with current image version
+	$(HELM_GENERATOR) package $(SRCROOT_IN_CONTAINER)/helm/$(CHART) --version $(CHART_VERSION) --app-version $(CHART_VERSION) -d $(SRCROOT_IN_CONTAINER)/helm/
+
+helm-build-property: ## create buil.properties for jenkins
+	sed 's/{CHART_FILE}/$(CHART_FILE)/g; s/{HELM_REPO}/$(HELM_REPO)/g' helm/build.properties.in > helm/build.properties
