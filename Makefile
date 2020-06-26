@@ -15,9 +15,9 @@ BUILD_NUMBER            ?= 0
 GIT_COMMIT              := $(shell git describe --exact-match HEAD 2>/dev/null)
 ifeq ($(GIT_COMMIT),)
     GIT_COMMIT          := $(shell git describe --dirty=-unsupported --always --tags --long || echo pre-commit)
-    VERSION       ?= $(GIT_COMMIT)-j$(BUILD_NUMBER)
+    VERSION             ?= $(GIT_COMMIT)-j$(BUILD_NUMBER)
 else
-    VERSION       ?= $(GIT_COMMIT)
+    VERSION             ?= $(GIT_COMMIT)
 endif
 
 DOCKER_IMAGE ?= infobloxcto/atlas.teleport.app
@@ -483,10 +483,10 @@ PROJECT_ROOT            := $(PWD)
 SRCROOT_ON_HOST         := $(shell dirname $(abspath $(lastword $(MAKEFILE_LIST))))
 SRCROOT_IN_CONTAINER    := /go/src/$(PROJECT_ROOT)
 
-AWS_ACCESS_KEY_ID       := $(shell aws configure get aws_access_key_id)
-AWS_SECRET_ACCESS_KEY   := $(shell aws configure get aws_secret_access_key)
-AWS_SESSION_TOKEN       := $(shell aws configure get aws_session_token)
-AWS_REGION              := $(shell aws configure get region)
+AWS_ACCESS_KEY_ID       ?= $(shell aws configure get aws_access_key_id)
+AWS_SECRET_ACCESS_KEY   ?= $(shell aws configure get aws_secret_access_key)
+AWS_SESSION_TOKEN       ?= $(shell aws configure get aws_session_token)
+AWS_REGION              ?= $(shell aws configure get region)
 
 CHART                   := atlas-teleport-app
 CHART_VERSION           := $(VERSION)
