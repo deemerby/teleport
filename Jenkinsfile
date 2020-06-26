@@ -6,11 +6,11 @@ pipeline {
     go "Go 1.13"
   }
   options {
-    checkoutToSubdirectory('src/github.com/Infoblox-CTO/atlas.teleport.app')
+    checkoutToSubdirectory('src/github.com/gravitational/teleport')
   }
   environment {
     GOPATH = "$WORKSPACE"
-    DIRECTORY = "src/github.com/Infoblox-CTO/atlas.teleport.app"
+    DIRECTORY = "src/github.com/gravitational/teleport"
   }
   stages {
     stage("Test") {
@@ -21,6 +21,7 @@ pipeline {
     stage("Build") {
       steps {
         sh '''
+          sudo apt-get install -y zip
           cd $DIRECTORY
           make image
         '''
