@@ -5,18 +5,18 @@
 apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
-  name: {{ $appName }}-ingress
+  name: {{ $appName }}-deeplink
   namespace: {{ $ns }}
   annotations:
     kubernetes.io/ingress.class: {{ tpl (.Values.host.csp.ingressClass) . }}
     nginx.ingress.kubernetes.io/backend-protocol: HTTPS
     nginx.ingress.kubernetes.io/limit-rps: "50"
-    nginx.ingress.kubernetes.io/rewrite-target: {{ tpl .Values.ingress.rewrite . }}
+    nginx.ingress.kubernetes.io/rewrite-target: {{ tpl .Values.ingress.deeplink.rewrite . }}
 spec:
   rules:
   - http:
       paths:
-      - path: {{ .Values.ingress.path }}
+      - path: {{ .Values.ingress.deeplink.path }}
         backend:
           serviceName: {{ $appName }}-external
           servicePort: proxyweb
@@ -25,4 +25,32 @@ spec:
   - secretName: {{ tpl .Values.proxy.tls.secretName . }}
     hosts:
     - {{ tpl (.Values.host.csp.domain) . }}
+
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: {{ $appName }}-proxy-https
+  namespace: {{ $ns }}
+  annotations:
+    kubernetes.io/ingress.class: {{ tpl (.Values.host.debug.ingressClass) . }}
+    nginx.ingress.kubernetes.io/backend-protocol: HTTPS
+    nginx.ingress.kubernetes.io/limit-rps: "50"
+    nginx.ingress.kubernetes.io/server-snippet: |
+{{- range $key, $val := .Values.ingress.proxy.files }}
+{{ $val | indent 6 }}
+{{- end }}
+spec:
+  rules:
+  - http:
+      paths:
+      - path: /(.*)
+        backend:
+          serviceName: {{ $appName }}-external
+          servicePort: proxyweb
+    host: {{ tpl (.Values.host.debug.domain) . }}
+  tls:
+  - secretName: {{ tpl .Values.proxy.tls.secretName . }}
+    hosts:
+    - {{ tpl (.Values.host.debug.domain) . }}
+
 {{- end -}}

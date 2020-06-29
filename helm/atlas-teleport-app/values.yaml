@@ -8,6 +8,10 @@ host:
   csp:
     domain: "{{ .Values.env }}.test.infoblox.com"
     ingressClass: nginx
+  debug:
+    domain: "proxy-{{ .Values.env }}.test.infoblox.com"
+    ingressClass: "{{ .Release.Namespace }}"
+    port: 3129
 
 region: us-east-1
 replicas: 1
@@ -34,9 +38,13 @@ services:
   - name: external
     type: LoadBalancer
     ports:
-      proxywebtunnel:
-        port: 443
-        targetPort: 443
+      proxyweb:
+        port: 3080
+        targetPort: 3080
+        protocol: TCP
+      proxytunnel:
+        port: 3024
+        targetPort: 3024
         protocol: TCP
     annotations:
       external-dns.alpha.kubernetes.io/hostname: "{{ tpl  .Values.appDomain . }}."
@@ -176,5 +184,22 @@ role:
   nodeLabel: support
 
 ingress:
-  path: "/api/debug/v2/launch/(.*)/"
-  rewrite: "https://{{ tpl .Values.appDomain . }}:3080/webapi/github/login/web?connector_id=github&redirect_url=https://{{ tpl .Values.appDomain . }}:3080/web/cluster/{{ .Values.env }}/console/node/$1/default"
+  deeplink:
+    path: "/api/debug/v2/launch/(.*)/"
+    rewrite: "https://{{ tpl .Values.appDomain . }}:3080/webapi/github/login/web?connector_id=github&redirect_url=https://{{ tpl .Values.appDomain . }}:3080/web/cluster/{{ .Values.env }}/console/node/$1/default"
+  proxy:
+    files:
+      serverSnipped: |
+        listen                         3129
+        ssl on;
+        ssl_protocols       TLSv1 TLSv1.1 TLSv1.2 TLSv1.3;
+        ssl_ciphers         AES128-SHA:AES256-SHA:RC4-SHA:DES-CBC3-SHA:RC4-MD5;
+        ssl_session_cache   shared:SSL:10m;
+        ssl_session_timeout 10m;
+
+        # forward proxy for CONNECT request
+        proxy_connect;
+        proxy_connect_allow            all;
+        proxy_connect_connect_timeout  100s;
+        proxy_connect_read_timeout     100s;
+        proxy_connect_send_timeout     100s;

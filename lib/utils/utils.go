@@ -356,9 +356,9 @@ func (p *PortList) PopIntSlice(num int) []int {
 }
 
 // PortStartingNumber is a starting port number for tests
-const PortStartingNumber = 20010
+const PortStartingNumber = 20050
 
-// GetFreeTCPPorts returns n ports starting from port 20010.
+// GetFreeTCPPorts returns n ports starting from port 20050.
 func GetFreeTCPPorts(n int, offset ...int) (PortList, error) {
 	list := make(PortList, 0, n)
 	start := PortStartingNumber
