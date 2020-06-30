@@ -8,7 +8,7 @@ host:
   csp:
     domain: "{{ .Values.env }}.test.infoblox.com"
     ingressClass: nginx
-  debug:
+  httpsProxy:
     domain: "proxy-{{ .Values.env }}.test.infoblox.com"
     ingressClass: "{{ .Release.Namespace }}"
     port: 3129
@@ -46,6 +46,10 @@ services:
         port: 3024
         targetPort: 3024
         protocol: TCP
+      proxyssh:
+        port: 3023
+        targetPort: 3023
+        protocol: TCP
     annotations:
       external-dns.alpha.kubernetes.io/hostname: "{{ tpl  .Values.appDomain . }}."
       service.beta.kubernetes.io/aws-load-balancer-backend-protocol: tcp
@@ -60,10 +64,6 @@ services:
       proxykube:
         port: 3026
         targetPort: 3026
-        protocol: TCP
-      proxyssh:
-        port: 3023
-        targetPort: 3023
         protocol: TCP
 
 allowedSourceRanges:
