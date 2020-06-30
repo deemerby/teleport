@@ -13,11 +13,11 @@ pipeline {
     DIRECTORY = "src/github.com/gravitational/teleport"
   }
   stages {
-    stage("Test") {
-      steps {
-        sh "cd $DIRECTORY && make test"
-      }
-    }
+//    stage("Test") {
+//      steps {
+//        sh "cd $DIRECTORY && make test"
+//      }
+//    }
     stage("Build") {
       steps {
         sh '''

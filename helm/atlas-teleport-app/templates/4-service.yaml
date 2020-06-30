@@ -19,10 +19,12 @@ metadata:
  {{- end }}
 spec:
   type: {{ $service.type }}
+  {{- if eq $service.type "LoadBalancer"}}
   {{- if $allowedSourceRanges }}
   loadBalancerSourceRanges:
   {{- range $allowedSourceRanges }}
     - {{ . }}
+  {{- end }}
   {{- end }}
   {{- end }}
   ports:
