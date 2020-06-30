@@ -18,15 +18,25 @@ pipeline {
 //        sh "cd $DIRECTORY && make test"
 //      }
 //    }
+    stage("Install zip") {
+      steps {
+        sh '''
+          while pgrep apt > /dev/null 2>&1
+          do
+            echo "Waiting for other software managers (APT) to finish..."
+            sleep 1
+          done
+          sudo apt-get install -y zip
+        '''
+      }
+    }
     stage("Build") {
       when {
         changeRequest()
       }
       steps {
         sh '''
-          sudo apt-get install -y zip
-          cd $DIRECTORY
-          make image
+          cd $DIRECTORY && make image
         '''
       }
     }
@@ -41,7 +51,6 @@ pipeline {
       steps {
         withDockerRegistry([credentialsId: "dockerhub-bloxcicd", url: ""]) {
           sh '''
-            sudo apt-get install -y zip
             cd $DIRECTORY && make publish
           '''
         }

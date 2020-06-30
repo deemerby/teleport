@@ -190,7 +190,7 @@ ingress:
   proxy:
     files:
       serverSnipped: |
-        listen                         3129 tls;
+        listen                         3129 ssl;
 
         ssl_protocols       TLSv1 TLSv1.1 TLSv1.2 TLSv1.3;
         ssl_ciphers         AES128-SHA:AES256-SHA:RC4-SHA:DES-CBC3-SHA:RC4-MD5;
