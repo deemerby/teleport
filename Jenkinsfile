@@ -67,7 +67,11 @@ pipeline {
       steps {
         // AWS_IAM_CI_CD_INFRA
         withAWS(credentials: "CICD_HELM", region: "us-east-1") {
-          sh "cd $DIRECTORY && make helm-push"
+          sh '''
+            cd $DIRECTORY
+            git checkout version.go
+            make helm-push
+          '''
         }
           dir("${WORKSPACE}/${DIRECTORY}") {
           archiveArtifacts artifacts: 'helm/*.tgz'
