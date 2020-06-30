@@ -19,6 +19,9 @@ pipeline {
 //      }
 //    }
     stage("Build") {
+      when {
+        changeRequest()
+      }
       steps {
         sh '''
           sudo apt-get install -y zip
@@ -38,6 +41,7 @@ pipeline {
       steps {
         withDockerRegistry([credentialsId: "dockerhub-bloxcicd", url: ""]) {
           sh '''
+            sudo apt-get install -y zip
             cd $DIRECTORY && make publish
           '''
         }
