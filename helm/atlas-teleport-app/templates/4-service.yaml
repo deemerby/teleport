@@ -2,6 +2,7 @@
 {{- $ns := include "teleport.namespace" . -}}
 {{- $labels := include "teleport.labels" . -}}
 {{- $allowedSourceRanges := .Values.allowedSourceRanges -}}
+{{- $gatewayAddress := .Values.gatewayAddress -}}
 {{- range $service := .Values.services }}
 ---
 apiVersion: v1
@@ -20,10 +21,13 @@ metadata:
 spec:
   type: {{ $service.type }}
   {{- if eq $service.type "LoadBalancer"}}
-  {{- if $allowedSourceRanges }}
+  {{- if or $allowedSourceRanges $gatewayAddress }}
   loadBalancerSourceRanges:
   {{- range $allowedSourceRanges }}
     - {{ . }}
+  {{- end }}
+  {{- if $gatewayAddress }}
+    - {{ $gatewayAddress }}
   {{- end }}
   {{- end }}
   {{- end }}

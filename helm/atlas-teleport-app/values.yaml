@@ -67,6 +67,7 @@ services:
         protocol: TCP
 
 allowedSourceRanges:
+gatewayAddress: 
 
 # Teleport Proxy configuration
 proxy:
