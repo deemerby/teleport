@@ -147,7 +147,7 @@ persistence:
 automountServiceAccountToken: true
 
 aws:
-  pca:
+  onpremHostPCA:
     arn: local
     onprem:
       name: aws-pca-onprem
