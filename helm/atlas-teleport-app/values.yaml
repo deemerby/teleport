@@ -31,6 +31,12 @@ image:
   pullPolicy: IfNotPresent
   pullSecrets:
   # - name: myRegistryKeySecretName
+  nginx:
+    repository: infobloxcto/ngp.k8s-nginx-ingress-https-proxy
+    tag: 2.8-v0.7.1-58-g159524c
+  backend:
+    repository: k8s.gcr.io/defaultbackend-amd64
+    tag: 1.5
 
 tolerations: []
 
@@ -204,3 +210,11 @@ ingress:
         proxy_connect_connect_timeout  100s;
         proxy_connect_read_timeout     100s;
         proxy_connect_send_timeout     100s;
+
+nginxAppName: nginx-ingress
+
+tls:
+  csp:
+    path: /{{ .Values.env }}/onprem-teleport/wildcard-tls
+    type: Opaque
+    secretName: base-wildcard-tls

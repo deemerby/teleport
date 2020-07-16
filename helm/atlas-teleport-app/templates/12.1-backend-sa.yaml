@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  labels:
+    app: {{ .Values.nginxAppName }}
+  name: {{ template "teleport.namespace" . }}-{{ .Values.nginxAppName }}-backend
+  namespace: {{ template "teleport.namespace" . }}
