@@ -8,6 +8,6 @@ spec:
   path: {{ tpl .Values.tls.nginx.path . | quote }}
   secretName: {{ .Values.tls.nginx.secretName }}
   secrets:
-    csp: "VAULT"
+    test: "VAULT"
   type: {{ .Values.tls.nginx.type }}
 ---

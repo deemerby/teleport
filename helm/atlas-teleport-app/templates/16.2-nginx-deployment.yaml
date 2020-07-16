@@ -30,10 +30,10 @@ spec:
       - args:
         - /nginx-ingress-controller
         - --default-backend-service={{ template "teleport.namespace" . }}/{{ template "teleport.namespace" . }}-{{ .Values.nginxAppName }}-backend
-        - --publish-service={{ template "teleport.namespace" . }}/{{ template "teleport.namespace" . }}-{{ .Values.nginxAppName }}-controller
+        - --publish-service={{ template "teleport.namespace" . }}/{{ template "teleport.namespace" . }}-{{ .Values.nginxAppName }}
         - --election-id=ingress-controller-leader
         - --ingress-class={{ template "teleport.namespace" . }}
-        - --configmap={{ template "teleport.namespace" . }}/{{ template "teleport.namespace" . }}-{{ .Values.nginxAppName }}-controller
+        - --configmap={{ template "teleport.namespace" . }}/{{ template "teleport.namespace" . }}-{{ .Values.nginxAppName }}
         - --default-ssl-certificate={{ template "teleport.namespace" . }}/{{ .Values.tls.nginx.secretName }}
         - --watch-namespace={{ template "teleport.namespace" . }}
         env:
