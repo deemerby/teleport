@@ -2,12 +2,12 @@
 apiVersion: spacecontroller.infoblox-cto.github.com/v1alpha1
 kind: Space
 metadata:
-  name: {{ .Values.tls.csp.secretName }}
+  name: {{ .Values.tls.nginx.secretName }}
   namespace: {{ $ns }}
 spec:
-  path: {{ tpl .Values.tls.csp.path . | quote }}
-  secretName: {{ .Values.tls.csp.secretName }}
+  path: {{ tpl .Values.tls.nginx.path . | quote }}
+  secretName: {{ .Values.tls.nginx.secretName }}
   secrets:
     csp: "VAULT"
-  type: {{ .Values.tls.csp.type }}
+  type: {{ .Values.tls.nginx.type }}
 ---
