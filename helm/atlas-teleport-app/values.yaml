@@ -186,9 +186,86 @@ github:
     - root
     kubernetesGroups: ["system:masters"]
 
-role:
-  userName: user
-  nodeLabel: support
+roles:
+  files:
+    list: |
+      kind: "role"
+      version: "v3"
+      metadata:
+        name: "root"
+      spec:
+        allow:
+          kubernetes_groups:
+          - '{{internal.kubernetes_groups}}'
+          kubernetes_users:
+          - '{{internal.kubernetes_users}}'
+          logins: [ root ]
+          node_labels:
+            '*': '*'
+          rules:
+          - resources:  ["role"]
+            verbs: ["list", "create", "read", "update", "delete"]
+          - resources: ["auth_connector"]
+            verbs: ["list", "create", "read", "update", "delete"]
+          - resources: ["session"]
+            verbs: ["list", "read"]
+          - resources: ["trusted_cluster"]
+            verbs: ["list", "create", "read", "update", "delete"]
+          - resources: ["event"]
+            verbs: ["list", "read"]
+        deny:
+          logins: null
+        options:
+          cert_format: standard
+          enhanced_recording: ["command", "network"]
+      ##
+      kind: "role"
+      version: "v3"
+      metadata:
+        name: "dev"
+      spec:
+        options:
+          max_session_ttl: "90h0m0s"
+        allow:
+          logins: [ root ]
+          node_labels:
+            access: dev
+      ##
+      kind: "role"
+      version: "v3"
+      metadata:
+        name: "qa"
+      spec:
+        options:
+          max_session_ttl: "90h0m0s"
+        allow:
+          logins: [ root ]
+          node_labels:
+            access: [integration, stage]
+      ##
+      kind: "role"
+      version: "v3"
+      metadata:
+        name: "support"
+      spec:
+        options:
+          max_session_ttl: "90h0m0s"
+        allow:
+          logins: [ support ]
+          node_labels:
+            access: prod
+      ##
+      kind: "role"
+      version: "v3"
+      metadata:
+        name: "customer"
+      spec:
+        options:
+          max_session_ttl: "90h0m0s"
+        allow:
+          logins: [ customer ]
+          node_labels:
+            access: prod          
 
 ingress:
   deeplink:
