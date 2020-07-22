@@ -9,7 +9,7 @@ host:
     domain: "{{ .Values.env }}.test.infoblox.com"
     ingressClass: nginx
   httpsProxy:
-    domain: "proxy-{{ .Values.env }}.test.infoblox.com"
+    domain: "proxy-{{ tpl .Values.host.csp.domain . }}"
     ingressClass: "{{ .Release.Namespace }}"
     port: 3129
 
