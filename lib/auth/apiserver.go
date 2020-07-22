@@ -985,7 +985,7 @@ func (s *APIServer) registerUsingToken(auth ClientI, w http.ResponseWriter, r *h
 }
 
 func (s *APIServer) registerUsingCert(auth ClientI, w http.ResponseWriter, r *http.Request, _ httprouter.Params, version string) (interface{}, error) {
-	log.Debugf("[registerUsingCert] start")
+	log.Debugf("[registerUsingCert] apiserver")
 	var req RegisterUsingCertRequest
 	if err := httplib.ReadJSON(r, &req); err != nil {
 		return nil, trace.Wrap(err)
@@ -994,13 +994,11 @@ func (s *APIServer) registerUsingCert(auth ClientI, w http.ResponseWriter, r *ht
 	// Pass along the remote address the request came from to the registration function.
 	req.RemoteAddr = r.RemoteAddr
 
-	log.Debugf("[registerUsingCert] call RegisterUsingCert")
 	keys, err := auth.RegisterUsingCert(req)
 	if err != nil {
 		return nil, trace.Wrap(err)
 	}
 
-	log.Debugf("[registerUsingCert] finish")
 	return keys, nil
 }
 
