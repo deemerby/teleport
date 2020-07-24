@@ -18,6 +18,7 @@ replicas: 1
 appDomain: "onprem-teleport-{{ tpl .Values.host.csp.domain . }}"
 strategy: RollingUpdate
 serviceInternalName: internal
+idleTimeout: 600
 
 enabled:
   # ------------------- begin enabled
@@ -59,6 +60,7 @@ services:
     annotations:
       external-dns.alpha.kubernetes.io/hostname: "{{ tpl  .Values.appDomain . }}."
       service.beta.kubernetes.io/aws-load-balancer-backend-protocol: tcp
+      service.beta.kubernetes.io/aws-load-balancer-connection-idle-timeout: "{{ .Values.idleTimeout | quote }}"
     externalTrafficPolicy: ""
   - name: "{{ .Values.serviceInternalName }}"
     type: ClusterIP

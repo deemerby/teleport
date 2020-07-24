@@ -33,7 +33,7 @@ data:
       cluster_name: {{ required "Cluster name is required" .Values.env }}
       listen_addr: 0.0.0.0:3025
       #public_addr: "{{ tpl .Values.appDomain . }}:3025"
-      client_idle_timeout: 1h
+      client_idle_timeout: never
     ssh_service:
       enabled: {{ .Values.config.ssh_service.enabled }}
       #public_addr: "{{ tpl .Values.appDomain . }}:3022"
