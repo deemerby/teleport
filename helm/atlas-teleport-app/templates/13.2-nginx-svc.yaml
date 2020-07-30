@@ -3,6 +3,8 @@ kind: Service
 metadata:
   labels:
     app: {{ .Values.nginxAppName }}
+  annotations:
+    service.beta.kubernetes.io/aws-load-balancer-connection-idle-timeout: "{{ .Values.idleTimeout }}"
   name: {{ template "teleport.namespace" . }}-{{ .Values.nginxAppName }}
   namespace: {{ template "teleport.namespace" . }}
 spec:
