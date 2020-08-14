@@ -81,6 +81,16 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: status.podIP
+        - name: SVC_USER
+          valueFrom:
+            secretKeyRef:
+              key: svcUserName
+              name: {{ .Values.vaultCommon.svcuser.name }}
+        - name: SVC_PASS
+          valueFrom:
+            secretKeyRef:
+              key: svcUserPass
+              name: {{ .Values.vaultCommon.svcuser.name }}
 {{- range $key, $value := .Values.extraVars }}
         - name: {{ $key }}
           value: {{ $value }}

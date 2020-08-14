@@ -7,6 +7,9 @@
 {{- $githubType := .Values.vaultCommon.github.type }}
 {{- $githubKeys := .Values.vaultCommon.github.keys }}
 {{- $githubPath := .Values.vaultCommon.github.path }}
+{{- $svcuserName := .Values.vaultCommon.svcuser.name }}
+{{- $svcuserType := .Values.vaultCommon.svcuser.type }}
+{{- $svcuserPath := .Values.vaultCommon.svcuser.path }}
 
 apiVersion: spacecontroller.infoblox-cto.github.com/v1alpha1
 kind: Space
@@ -55,5 +58,22 @@ spec:
     {{ . }}: VAULT
     {{- end }}
   type: {{ $githubType }}
+
+---
+
+apiVersion: spacecontroller.infoblox-cto.github.com/v1alpha1
+kind: Space
+metadata:
+  labels:
+    app: {{ template "teleport.name" . }}
+  name: {{ $svcuserName }}
+  namespace: {{ .Release.Namespace }}
+spec:
+  path: {{ tpl $svcuserPath . }}
+  secretName: {{ $svcuserName }}
+  secrets:
+    svcUserName: VAULT
+    svcUserPass: VAULT
+  type: {{ $svcuserType }}
 
 ---

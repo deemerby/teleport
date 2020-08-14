@@ -176,6 +176,10 @@ vaultCommon:
       - clientID
       - clientSecret
     type: Opaque
+  svcuser:
+    name: onprem-teleport-svcuser
+    path: /{{ .Values.env }}/onprem-teleport/svcuser
+    type: Opaque
 
 github:
   clientID: ${GITHUB_CLIENTID}
